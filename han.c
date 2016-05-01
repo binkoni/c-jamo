@@ -6,92 +6,83 @@
 #include <hangul.h>
 #include <iconv.h>
 
-void utf8_to_ucs4(char** inbuf, size_t* inbufbytesleft, char** outbuf, size_t* outbufbytesleft)
+void utf8_to_ucs4(char** inbuf, size_t* inbufbytesleft, ucschar** outbuf, size_t* outbufbytesleft)
 {
     iconv_t cd = iconv_open("UCS-4", "UTF-8");
     if (cd == (iconv_t) - 1) fprintf(stderr, "iconv_open failed with %d\n", errno);
 
-    int rc = iconv(cd, inbuf, inbufbytesleft, outbuf, outbufbytesleft);
+    int rc = iconv(cd, inbuf, inbufbytesleft, (char**)outbuf, outbufbytesleft);
     if (rc == -1) fprintf(stderr, "iconv failed with -1. errno is %d: %s\n", errno, strerror(errno));
 
     rc = iconv_close(cd);
     if (rc != 0) fprintf(stderr, "iconv_close failed with %d\n", errno);
 }
 
-void ucs4_to_utf8(char** inbuf, size_t* inbufbytesleft, char** outbuf, size_t* outbufbytesleft)
+void ucs4_to_utf8(ucschar** inbuf, size_t* inbufbytesleft, char** outbuf, size_t* outbufbytesleft)
 {
     iconv_t cd = iconv_open("UTF-8", "UCS-4");
     if (cd == (iconv_t) - 1) fprintf(stderr, "iconv_open failed with %d\n", errno);
 
-    int rc = iconv(cd, inbuf, inbufbytesleft, outbuf, outbufbytesleft);
+    int rc = iconv(cd, (char**)inbuf, inbufbytesleft, outbuf, outbufbytesleft);
     if (rc == -1) fprintf(stderr, "iconv failed with -1. errno is %d: %s\n", errno, strerror(errno));
 
     rc = iconv_close(cd);
     if (rc != 0) fprintf(stderr, "iconv_close failed with %d\n", errno);
 }
 
-size_t ucs4_array_length(int* array)
+size_t ucs4_array_len(ucschar* array)
 {
-    size_t length = 0;
-    while(array[length] != 0) length++;
-    return length; 
+    size_t len = 0;
+    while(array[len] != 0) len++;
+    return len; 
 }
-
 
 int main(int argc, char** argv)
 {
     setlocale(LC_ALL, "en_US.utf8");
 
     char* in = "yoㅎㅎㅎ";
-    printf("%d\n", mbstowcs(NULL, in, 0));
+    printf("mbstowcs(in): %d\n", mbstowcs(NULL, in, 0));
 
-    size_t inbufbytes = strlen(in);
+    size_t inbuflen = strlen(in);
 
-    char out[100];
-    memset(out, 0, sizeof(out));
-    size_t outbufbytes = sizeof(out);
+    ucschar* out;
+    size_t outbuflen = mbstowcs(NULL, in, 0);
+    out = calloc(outbuflen, sizeof(ucschar));
 
-    size_t inbufbytesleft = inbufbytes;
-    size_t outbufbytesleft = outbufbytes;
+    size_t inbufbytesleft = inbuflen;
+    size_t outbufbytesleft = outbuflen * sizeof(ucschar);
 
     char* inbuf = in;
-    char* outbuf = out;
+    ucschar* outbuf = out;
     
     utf8_to_ucs4(&inbuf, &inbufbytesleft, &outbuf, &outbufbytesleft);
 
-    printf("ucs4_array_length(out): %d\n", ucs4_array_length((int*)out));
-    printf("out: %s\n", out);
-    printf("out[0](%%d): %d\n", out[0]);
-    printf("out[1](%%d): %d\n", out[1]);
-    printf("out[2](%%d): %d\n", out[2]);
-    printf("out[3](%%d): %d\n", out[3]);
+    printf("ucs4_array_len(out): %d\n", ucs4_array_len(out));
 
 
-    char in2[100];
-    in2[0] = out[0];
-    in2[1] = out[1];
-    in2[2] = out[2];
-    in2[3] = out[3];
 
-    size_t inbufbytes2 = 4;
+    ucschar* in2;
+    size_t inbuflen2 = ucs4_array_len(out);
+    in2 = malloc(inbuflen2 * sizeof(ucschar));
+
+    memcpy(in2, out, inbuflen2 * sizeof(ucschar));
 
     char out2[100];
-    size_t outbufbytes2 = sizeof(out2);
+    size_t outbuflen2 = sizeof(out2);
 
-    size_t inbufbytesleft2 = inbufbytes2;
-    size_t outbufbytesleft2 = outbufbytes2;
+    size_t inbufbytesleft2 = inbuflen2 * sizeof(ucschar);
+    size_t outbufbytesleft2 = outbuflen2;
 
-    char* inbuf2 = in2;
+    ucschar* inbuf2 = in2;
     char* outbuf2 = out2;
 
     ucs4_to_utf8(&inbuf2, &inbufbytesleft2, &outbuf2, &outbufbytesleft2);
 
     printf("strlen(out2): %d\n", strlen(out2));
     printf("out2: %s\n", out2);
-    printf("out2[0](%%d): %d\n", out2[0]);
-    printf("out2[1](%%d): %d\n", out2[1]);
-    printf("out2[2](%%d): %d\n", out2[2]);
-    printf("out2[3](%%d): %d\n", out2[3]);
 
+    free(out);
+    free(in2);
     return 0;
 }
