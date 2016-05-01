@@ -1,9 +1,11 @@
 CC=gcc
 CFLAGS=-O3 -s
-han: han.o
+bin/han: bin/han.o
+	mkdir -p bin
 	$(CC) $(CFLAGS) $^ -o $@ -l hangul
-han.o: han.c
+bin/han.o: han.c
+	mkdir -p bin
 	$(CC) -c $(CFLAGS) $^ -o $@ -I /usr/include/hangul-1.0
 
 clean:
-	rm han han.o
+	rm bin/han bin/han.o
