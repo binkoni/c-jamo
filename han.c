@@ -72,10 +72,11 @@ int main(int argc, char** argv)
 
     memcpy(in2, out, inlen2 * sizeof(ucschar));
 
-    char out2[100];
-    size_t outlen2 = sizeof(out2);
+    char* out2;
+    size_t outlen2 = inlen2;
+    out2 = calloc(outlen2, sizeof(ucschar));
 
-    ucs4_to_utf8(in2, inlen2 * sizeof(ucschar), out2, outlen2 * sizeof(char));
+    ucs4_to_utf8(in2, inlen2 * sizeof(ucschar), out2, outlen2 * sizeof(ucschar));
 
     printf("strlen(out2): %d\n", strlen(out2));
     printf("out2: %s\n", out2);
