@@ -17,7 +17,7 @@ void utf8_to_ucs4(char* inbuf, size_t inbufbytes, ucschar* outbuf, size_t outbuf
     if (cd == (iconv_t) - 1) fprintf(stderr, "iconv_open failed with %d\n", errno);
 
     int rc = iconv(cd, &inbuftemp, &inbufbytesleft, &outbuftemp, &outbufbytesleft);
-    if (rc == -1) fprintf(stderr, "iconv failed with -1. errno is %d: %s\n", errno, strerror(errno));
+    if (rc == -1) fprintf(stderr, "LINE %d: iconv failed with -1. errno is %d: %s\n", __LINE__, errno, strerror(errno));
 
     rc = iconv_close(cd);
     if (rc != 0) fprintf(stderr, "iconv_close failed with %d\n", errno);
@@ -34,7 +34,7 @@ void ucs4_to_utf8(ucschar* inbuf, size_t inbufbytes, char* outbuf, size_t outbuf
     if (cd == (iconv_t) - 1) fprintf(stderr, "iconv_open failed with %d\n", errno);
 
     int rc = iconv(cd, &inbuftemp, &inbufbytesleft, &outbuftemp, &outbufbytesleft);
-    if (rc == -1) fprintf(stderr, "iconv failed with -1. errno is %d: %s\n", errno, strerror(errno));
+    if (rc == -1) fprintf(stderr, "LINE %d: iconv failed with -1. errno is %d: %s\n", __LINE__, errno, strerror(errno));
 
     rc = iconv_close(cd);
     if (rc != 0) fprintf(stderr, "iconv_close failed with %d\n", errno);
