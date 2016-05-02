@@ -51,8 +51,9 @@ int main(int argc, char** argv)
 {
     setlocale(LC_ALL, "en_US.utf8");
 
-    char* in = "가";
-    printf("mbstowcs(in): %d\n", mbstowcs(NULL, in, 0));
+    char in[4];
+    printf("input: ");
+    scanf("%s", in);
 
     size_t inlen = strlen(in);
 
@@ -61,10 +62,6 @@ int main(int argc, char** argv)
     out = calloc(outlen, sizeof(ucschar));
 
     utf8_to_ucs4(in, inlen * sizeof(char), out, outlen * sizeof(ucschar));
-
-    printf("ucs4_array_len(out): %d\n", ucs4_array_len(out));
-
-    printf("out: %s\n", out);
 
     ucschar choseong = 0;
     ucschar jungseong = 0;
@@ -77,42 +74,18 @@ int main(int argc, char** argv)
     ucs4_to_utf8(&choseong, sizeof(ucschar), utf8choseong, sizeof(ucschar));
 
     char utf8jungseong[sizeof(ucschar)];
-    memset(utf8jungseong, 0, sizeof(utf8jungseong)); 
+    memset(utf8jungseong, 0, sizeof(utf8jungseong));
     ucs4_to_utf8(&jungseong, sizeof(ucschar), utf8jungseong, sizeof(ucschar));
 
     char utf8jongseong[sizeof(ucschar)];
-    memset(utf8jongseong, 0, sizeof(utf8jongseong)); 
+    memset(utf8jongseong, 0, sizeof(utf8jongseong));
     ucs4_to_utf8(&jongseong, sizeof(ucschar), utf8jongseong, sizeof(ucschar));
 
-    printf("초성:%s\n", utf8choseong);
-    printf("중성:%d\n", utf8jungseong);
-    printf("종성:%d\n", utf8jongseong);
-
-
-
-
-
-
-    ucschar* in2;
-    size_t inlen2 = ucs4_array_len(out);
-    in2 = malloc(inlen2 * sizeof(ucschar));
-
-    memcpy(in2, out, inlen2 * sizeof(ucschar));
-
-    char* out2;
-    size_t outlen2 = inlen2;
-    out2 = calloc(outlen2, sizeof(ucschar));
-
-    ucs4_to_utf8(in2, inlen2 * sizeof(ucschar), out2, outlen2 * sizeof(ucschar));
-
-    printf("strlen(out2): %d\n", strlen(out2));
-    printf("out2: %s\n", out2);
-
+    printf("초성:%s (%x %x %x %x)\n", utf8choseong, utf8choseong[0], utf8choseong[1], utf8choseong[2], utf8choseong[3]);
+    printf("중성:%s (%x %x %x %x)\n", utf8jungseong, utf8jungseong[0], utf8jungseong[1], utf8jungseong[2], utf8jungseong[3]);
+    printf("종성:%s (%x %x %x %x)\n", utf8jongseong, utf8jongseong[0], utf8jongseong[1], utf8jongseong[2], utf8jongseong[3]);
 
     free(out);
-
-    free(in2);
-    free(out2);
 
     return 0;
 }
