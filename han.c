@@ -50,7 +50,8 @@ size_t ucs4_array_len(ucschar* array)
 int main(int argc, char** argv)
 {
     setlocale(LC_ALL, "en_US.utf8");
-
+while(true)
+{
     char in[4];
     printf("input: ");
     scanf("%s", in);
@@ -68,24 +69,40 @@ int main(int argc, char** argv)
     ucschar jongseong = 0;
 
     hangul_syllable_to_jamo(out[0], &choseong, &jungseong, &jongseong);
-
-    char utf8choseong[sizeof(ucschar)];
-    memset(utf8choseong, 0, sizeof(utf8choseong));
-    ucs4_to_utf8(&choseong, sizeof(ucschar), utf8choseong, sizeof(ucschar));
-
-    char utf8jungseong[sizeof(ucschar)];
-    memset(utf8jungseong, 0, sizeof(utf8jungseong));
-    ucs4_to_utf8(&jungseong, sizeof(ucschar), utf8jungseong, sizeof(ucschar));
-
-    char utf8jongseong[sizeof(ucschar)];
-    memset(utf8jongseong, 0, sizeof(utf8jongseong));
-    ucs4_to_utf8(&jongseong, sizeof(ucschar), utf8jongseong, sizeof(ucschar));
-
-    printf("초성:%s (%x %x %x %x)\n", utf8choseong, utf8choseong[0], utf8choseong[1], utf8choseong[2], utf8choseong[3]);
-    printf("중성:%s (%x %x %x %x)\n", utf8jungseong, utf8jungseong[0], utf8jungseong[1], utf8jungseong[2], utf8jungseong[3]);
-    printf("종성:%s (%x %x %x %x)\n", utf8jongseong, utf8jongseong[0], utf8jongseong[1], utf8jongseong[2], utf8jongseong[3]);
-
     free(out);
+
+    char utf8_choseong[sizeof(ucschar)];
+    memset(utf8_choseong, 0, sizeof(utf8_choseong));
+    ucs4_to_utf8(&choseong, sizeof(ucschar), utf8_choseong, sizeof(ucschar));
+
+    char utf8_jungseong[sizeof(ucschar)];
+    memset(utf8_jungseong, 0, sizeof(utf8_jungseong));
+    ucs4_to_utf8(&jungseong, sizeof(ucschar), utf8_jungseong, sizeof(ucschar));
+
+    char utf8_jongseong[sizeof(ucschar)];
+    memset(utf8_jongseong, 0, sizeof(utf8_jongseong));
+    ucs4_to_utf8(&jongseong, sizeof(ucschar), utf8_jongseong, sizeof(ucschar));
+    
+    ucschar choseong_syllable = hangul_jamo_to_cjamo(choseong);
+    ucschar jungseong_syllable = hangul_jamo_to_cjamo(jungseong);
+    ucschar jongseong_syllable = hangul_jamo_to_cjamo(jongseong);
+
+    char utf8_choseong_syllable[sizeof(ucschar)];
+    memset(utf8_choseong_syllable, 0, sizeof(utf8_choseong_syllable));
+    ucs4_to_utf8(&choseong_syllable, sizeof(ucschar), utf8_choseong_syllable, sizeof(ucschar));
+
+    char utf8_jungseong_syllable[sizeof(ucschar)];
+    memset(utf8_jungseong_syllable, 0, sizeof(utf8_jungseong_syllable));
+    ucs4_to_utf8(&jungseong_syllable, sizeof(ucschar), utf8_jungseong_syllable, sizeof(ucschar)); 
+
+    char utf8_jongseong_syllable[sizeof(ucschar)];
+    memset(utf8_jongseong_syllable, 0, sizeof(utf8_jongseong_syllable));
+    ucs4_to_utf8(&jongseong_syllable, sizeof(ucschar), utf8_jongseong_syllable, sizeof(ucschar)); 
+
+    printf("초성:%s (%x %x %x %x)\n", utf8_choseong_syllable, utf8_choseong_syllable[0], utf8_choseong_syllable[1], utf8_choseong_syllable[2], utf8_choseong_syllable[3]);
+    printf("중성:%s (%x %x %x %x)\n", utf8_jungseong_syllable, utf8_jungseong_syllable[0], utf8_jungseong_syllable[1], utf8_jungseong_syllable[2], utf8_jungseong_syllable[3]);
+    printf("종성:%s (%x %x %x %x)\n", utf8_jongseong_syllable, utf8_jongseong_syllable[0], utf8_jongseong_syllable[1], utf8_jongseong_syllable[2], utf8_jongseong_syllable[3]);
+}
 
     return 0;
 }
