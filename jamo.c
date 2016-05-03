@@ -50,26 +50,25 @@ size_t ucs4_array_len(ucschar* array)
 int main(int argc, char** argv)
 {
     setlocale(LC_ALL, "en_US.utf8");
+//    size_t utf8_input_len = strlen(utf8_input);
+//    size_t ucs4_input_len = mbstowcs(NULL, utf8_input, 0);
+
+
 while(true)
 {
-    char in[4];
-    printf("input: ");
-    scanf("%s", in);
+    char utf8_input[3 + 1];
+    printf("input:");
+    fgets(utf8_input, sizeof(utf8_input) * sizeof(char) , stdin);
+    fgetc(stdin);
 
-    size_t inlen = strlen(in);
-
-    ucschar* out;
-    size_t outlen = mbstowcs(NULL, in, 0);
-    out = calloc(outlen, sizeof(ucschar));
-
-    utf8_to_ucs4(in, inlen * sizeof(char), out, outlen * sizeof(ucschar));
+    ucschar ucs4_input[1];
+    utf8_to_ucs4(utf8_input, sizeof(utf8_input) * sizeof(char) , ucs4_input, sizeof(ucs4_input) * sizeof(ucschar));
 
     ucschar choseong = 0;
     ucschar jungseong = 0;
     ucschar jongseong = 0;
 
-    hangul_syllable_to_jamo(out[0], &choseong, &jungseong, &jongseong);
-    free(out);
+    hangul_syllable_to_jamo(ucs4_input[0], &choseong, &jungseong, &jongseong);
 
     char utf8_choseong[sizeof(ucschar)];
     memset(utf8_choseong, 0, sizeof(utf8_choseong));
@@ -98,6 +97,18 @@ while(true)
     char utf8_jongseong_syllable[sizeof(ucschar)];
     memset(utf8_jongseong_syllable, 0, sizeof(utf8_jongseong_syllable));
     ucs4_to_utf8(&jongseong_syllable, sizeof(ucschar), utf8_jongseong_syllable, sizeof(ucschar)); 
+
+    if(utf8_choseong_syllable[0] + utf8_choseong_syllable[1] + utf8_choseong_syllable[2] + utf8_choseong_syllable[3] + utf8_choseong_syllable[4] == 0)
+    {
+        if(hangul_is_jamo(ucs4_input[0])) printf("this is jamo\n");
+        if(hangul_is_cjamo(ucs4_input[0])) printf("this is cjamo\n");
+        if(hangul_is_syllable(ucs4_input[0])) printf("this is syllable\n");
+
+        if(hangul_is_choseong(ucs4_input[0]))
+            memcpy(utf8_choseong_syllable, utf8_input, sizeof(ucschar));
+        else if(hangul_is_jungseong(ucs4_input[0]))
+            memcpy(utf8_jungseong_syllable, utf8_input, sizeof(ucschar));
+    }
 
     printf("초성:%s (%x %x %x %x)\n", utf8_choseong_syllable, utf8_choseong_syllable[0], utf8_choseong_syllable[1], utf8_choseong_syllable[2], utf8_choseong_syllable[3]);
     printf("중성:%s (%x %x %x %x)\n", utf8_jungseong_syllable, utf8_jungseong_syllable[0], utf8_jungseong_syllable[1], utf8_jungseong_syllable[2], utf8_jungseong_syllable[3]);
