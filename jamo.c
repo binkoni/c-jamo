@@ -58,11 +58,11 @@ while(true)
 {
     char utf8_input[3 + 1];
     printf("input:");
-    fgets(utf8_input, sizeof(utf8_input) * sizeof(char) , stdin);
+    fgets(utf8_input, sizeof(utf8_input) , stdin);
     fgetc(stdin);
 
-    ucschar ucs4_input[1];
-    utf8_to_ucs4(utf8_input, sizeof(utf8_input) * sizeof(char) , ucs4_input, sizeof(ucs4_input) * sizeof(ucschar));
+    ucschar ucs4_input[2];
+    utf8_to_ucs4(utf8_input, sizeof(utf8_input) , ucs4_input, sizeof(ucs4_input));
 
     ucschar choseong = 0;
     ucschar jungseong = 0;
