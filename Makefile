@@ -5,7 +5,7 @@ bin/jamo: bin/jamo.o
 	$(CC) $(CFLAGS) $^ -o $@ -l hangul
 bin/jamo.o: jamo.c
 	mkdir -p bin
-	$(CC) -c $(CFLAGS) $^ -o $@ -I /usr/include/hangul-1.0
+	;$(CC) -c $(CFLAGS) $^ -o $@ -I /usr/include/hangul-1.0
 
 clean:
-	rm bin/han bin/jamo.o
+	rm bin/jamo bin/jamo.o
